@@ -1,0 +1,3 @@
+[submodule "demez_key_values"]
+	path = demez_key_values
+	url = https://github.com/Demez/DemezKeyValues
