@@ -6,58 +6,7 @@ import re
 import urllib.request
 from datetime import datetime
 
-from pdb import set_trace as bp
-
-# https://stackoverflow.com/questions/48012370/with-python-get-json-variable-from-javascript
-
-
-# TODO: improve this shit
-# maybe instead, split by listingRenderable, and then try loading it with json,
-# and then split this by the invalid character
-# that might honestly work better, idk
-# unless there are 2 listingRenderables, then maybe get the last one?
-# or keep trying until it's the correct one?
-# this actually ends at sequence_number, so maybe use that here?
-fuck_facebook_regex = re.compile("""listingRenderable:{.+}}}}""")
-fuck_facebook_regex_2 = re.compile("""listingRenderable:{.+}}},""")
-
 ENGINE_FEATURES = {"V8, 4.6 Liter", "Dual Air Bags", "Automatic", "Manual, 5-Spd", "Leather"}
-
-
-regex_item = re.compile(r"""
-    ^\s*([\'"]?)([a-z][a-z0-9_]*)\1\s*:\s*(.+?)\s*,?\s*$
-    """, re.IGNORECASE | re.VERBOSE)
-
-
-def Scrape(text):
-    result = None
-    regex_index = 0
-    
-    match = fuck_facebook_regex.search(text)
-    
-    if match is None:
-        regex_index = 1
-        match = fuck_facebook_regex_2.search(text)
-    
-    if match is not None:
-        for line in match.group(0).splitlines():
-            
-            if regex_index == 0:
-                line = line[:-2]
-            elif regex_index == 1:
-                line = line[:-3]
-            
-            match = regex_item.match(line)
-            if match is None:
-                continue
-            key, value = match.group(2, 3)
-            try:
-                result = hjson.loads(value)
-            except Exception as F:
-                print(str(F))
-                
-        dict_result = ConvertOrderedDictToDict({}, result)
-        return dict_result
 
 
 def GrabListingRenderable(text):
