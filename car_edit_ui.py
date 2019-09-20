@@ -198,7 +198,7 @@ class CarEditUI(QWidget):
         self.main_layout.setSpacing(8)
         self.main_layout.setContentsMargins(QMargins(8, 8, 8, 8))
         
-    def ShowUI(self, car_config):
+    def UpdateInfo(self, car_config):
         self._car_config = car_config
 
         self.base_settings.SetInfo(car_config)
@@ -206,6 +206,9 @@ class CarEditUI(QWidget):
         self.engine.SetInfo(car_config)
         self.car_info.SetInfo(car_config)
         self.mpg.SetInfo(car_config)
+        
+    def ShowUI(self, car_config):
+        self.UpdateInfo(car_config)
         
         if self.isHidden():
             self.show()

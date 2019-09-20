@@ -45,6 +45,7 @@ class CarWatcherGUI(QWidget):
         self.car_list = []
         self.car_list_items = []
         self.car_list_ui = QListWidget()
+        self.update_all_btn = QPushButton("Update All")
         self.remove_btn = QPushButton("Remove Car")
         
         self.car_add_ui = CarAddUI(self)
@@ -160,12 +161,19 @@ class CarWatcherGUI(QWidget):
         label.setFont(QFont(MAIN_FONT, FONT_SIZE_LARGE))
         label.setAlignment(Qt.AlignCenter)
 
-        button = QPushButton("Add Car", self)
-        button.setToolTip("Enter the url of a listing to automatically add it")
-        button.setFixedHeight(32)
-        button.setStyleSheet(BUTTON_CSS)
-        button.setFont(QFont(MAIN_FONT, FONT_SIZE_SMALL))
-        button.clicked.connect(self.OnAddCarBtnClick)
+        add_car_btn = QPushButton("Add Car", self)
+        add_car_btn.setToolTip("Enter the url of a listing to automatically add it")
+        add_car_btn.setFixedHeight(32)
+        add_car_btn.setStyleSheet(BUTTON_CSS)
+        add_car_btn.setFont(QFont(MAIN_FONT, FONT_SIZE_SMALL))
+        add_car_btn.clicked.connect(self.OnAddCarBtnClick)
+
+        self.update_all_btn.setToolTip("Update all cars from the URL")
+        self.update_all_btn.setFixedHeight(32)
+        self.update_all_btn.setStyleSheet(BUTTON_CSS)
+        self.update_all_btn.setFont(QFont(MAIN_FONT, FONT_SIZE_SMALL))
+        self.update_all_btn.clicked.connect(self.UpdateAllBtn)
+        self.update_all_btn.hide()
 
         self.remove_btn.setToolTip("Remove the currently selected car")
         self.remove_btn.setFixedHeight(32)
@@ -177,8 +185,9 @@ class CarWatcherGUI(QWidget):
         car_list_layout = QVBoxLayout()
         car_list_layout.addWidget(label)
         car_list_layout.addWidget(self.car_list_ui)
+        car_list_layout.addWidget(self.update_all_btn)
         car_list_layout.addWidget(self.remove_btn)
-        car_list_layout.addWidget(button)
+        car_list_layout.addWidget(add_car_btn)
         car_list_layout.setSpacing(8)
         car_list_layout.setContentsMargins(QMargins(8, 8, 8, 8))
         
@@ -290,6 +299,7 @@ class CarWatcherGUI(QWidget):
         self.DisplayCarInfo(parsed_car)
         self.current_car.setText(parsed_car.car)
         self.remove_btn.show()
+        self.update_all_btn.show()
 
         if not self.car_info_ui.car_edit_ui.isHidden():
             self.car_info_ui.OnEditInfoBtnClick()
@@ -334,9 +344,16 @@ class CarWatcherGUI(QWidget):
         self.SetCarImage(parsed_car)
         self.current_car.setText(parsed_car.car)
         self.remove_btn.show()
+        self.update_all_btn.show()
         
         if not self.car_info_ui.car_edit_ui.isHidden():
             self.car_info_ui.OnEditInfoBtnClick()
+
+    @pyqtSlot()
+    def UpdateAllBtn(self):
+        for item in self.car_list:
+            self.car_info_ui.car_edit_ui.UpdateInfo(item)
+            self.car_info_ui.car_edit_ui.OnUpdateBtnPress()
 
     @pyqtSlot()
     def OnImageClick(self):
